@@ -1,0 +1,8 @@
+{
+  "name": "Introducción al testing",
+  "favicon": "file/favicon.ico",
+  "author": "Oinak",
+  "sections": [
+    {"section": "intro"}
+  ]
+}

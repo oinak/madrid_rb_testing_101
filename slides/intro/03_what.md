@@ -1,0 +1,153 @@
+!SLIDE subsection
+
+# ¿Qué testear (unit)?
+
+         | Incoming             | Outgoing
+---------|----------------------|---------------------------
+ Query   | (1) Response         | (3) Stub (test at provider)
+ Command | (2) State (Response) | (4) Call is made (mock/verify)
+
+- **1:** `full_name` en una persona
+- **2:** `compact!` en una colección
+- **3:** `Time.now` que usaremos en un timestamp
+- **4:** `Slack.notify(channel: "#alert",txt: "Error: #{msg}")`
+
+!SLIDE
+
+## 1. incoming query
+
+- Como lo que hemos visto
+- Llamar a un método público y
+- Comparar el retorno con lo esperado
+
+!SLIDE bullets
+## 2. incoming command
+
+    @@@ Ruby
+
+    class Cart
+      def scan(code)
+        @products << Product.new(code)
+      end
+
+      def total
+        sub_total - discounts
+      end
+
+      #...
+    end
+
+Y si no hay método `products`?
+
+!SLIDE bullets incremental
+## 2. incoming command (cont)
+
+Opciones:
+
+- No testear "si es privado no le importa a nadie"
+- Efectos "testear lo que ves"
+- `send(:privado)`, `get_instance_variable("@foo")`
+
+!SLIDE
+## 3. outgoing query
+
+- **este** test no debería fallar
+- no ejecutar código de más
+- respuesta conocida
+
+!SLIDE bullets incremental
+## 3. outgoing query (stub)
+
+    @@@ Ruby
+    product = Product.new(expire_date: Date.new(2010,5,5))
+
+    def Date.today
+      new(2010, 5, 6)
+    end
+
+    assert_equal(product.expired?, true)
+
+- `Date` se queda modificado
+- hay que *arreglarlo* a mano
+
+!SLIDE bullets incremental
+## 3. outgoing query (stub/minitest)
+
+    @@@ Ruby
+    # add 'require "minitest/mock"' to test_helper.rb
+    class PersonTest < Minitest::Test
+      def setup
+        @product = Product.new(expire_date: Date.new(2010,5,5))
+        @expired_date = Date.new(2010,5,6)
+      end
+
+      def test_expired_after_exired_date
+        Time.stub(:now, @expired_date) do
+          assert_equal(@product.expired?, true)
+        end
+      end
+    end
+
+- método queda restaurado al terminar el bloque
+
+!SLIDE
+## 3. outgoing query (stub/spec)
+
+    @@@ Ruby
+
+    describe Product do # Rspec.describe Product do
+      describe ".expired?" do
+        subject{ Product.new(expire_date: Date.new(2010,5,5)) }
+
+        context "after expire date" do
+          let(:expired_date){ Date.new(2010,5,6) }
+          before do
+            allow(Date).to receive(:today).and_return(expired_date)
+          end
+
+          it "is expired" do
+            expect(subject).to be_expired # checks with and without '?'
+          end
+        end
+      end
+    end
+
+!SLIDE
+## 3. outgoing query (stub/minispec)
+
+    @@@ Ruby
+    # add 'require "minitest/spec"' to test_helper.rb
+    describe Product do # class ProductTest < Minitest::Spec
+      describe ".expired?" do
+        subject{ Product.new(expire_date: Date.new(2010,5,5)) }
+
+        describe "after expire date" do
+          let(:expired_date){ Date.new(2010,5,6) }
+          before do
+            allow(Date).to receive(:today).and_return(expired_date)
+          end
+
+          it "is expired" do
+            expect(subject).must_be :expired?
+          end
+        end
+      end
+    end
+
+!SLIDE bullets incremental
+## 4. outgoing command
+
+- comprobar que cambiamos el mundo
+- no cómo, sino qué
+
+!SLIDE bullets incremental
+## 4. outgoing command (mock/minitest)
+
+- comprobar que cambiamos el mundo
+- no cómo, sino qué
+
+!SLIDE
+
+## clase con dependencias
+
+~~~FILE:../examples/dep_one.rb:ruby~~~
