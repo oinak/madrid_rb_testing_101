@@ -6,7 +6,8 @@
 }
 
 pre.highlight{
-  font-size: 0.8em;
+  font-size: 0.9em;
+  margin: 0px;
 }
 
 .content {
@@ -17,4 +18,7 @@ pre.highlight{
   font-size: 2em;
 }
 
-
+.highlight .language-shell {
+  color: white;
+  background-color: black;
+}

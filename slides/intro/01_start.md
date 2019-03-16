@@ -3,6 +3,12 @@
 
 # ¿Cómo testear?
 
+> Érase una vez...
+
+<small>
+*La trágica historia del estudiante de informática que no conocía cvs*
+</small>
+
 !SLIDE
 
 ## clase mínima de ruby:
@@ -18,7 +24,7 @@ Almacena un nobre de usuario para saludarlo
 
 ## clase mínima de ruby:
 
-~~~FILE:../examples/greeter.rb:ruby~~~
+~~~FILE:/examples/greeter.rb:ruby~~~
 
 !SLIDE incremental bullets
 
@@ -35,7 +41,7 @@ Almacena un nobre de usuario para saludarlo
 
 !SLIDE incremental bullets
 
-## prueba mínima en irb/fichero:
+## prueba mínima en irb:
 
     @@@ Ruby
     require './examples/greeter.rb'
@@ -82,7 +88,7 @@ Almacena un nobre de usuario para saludarlo
 ## test mínimo (minitest):
 
     @@@ Ruby
-    require 'minitest/autorun'           # "ejecútame como test"
+    require 'minitest/autorun'           # "soy un test"
     require 'my_obj'                     # carga lo que vas a probar
 
     class ObjTest < Minitest::Test       # convención: TuClaseTest
@@ -103,7 +109,7 @@ Almacena un nobre de usuario para saludarlo
 
 ## test mínimo (minitest):
 
-~~~FILE:../examples/greeter_test.rb:ruby~~~
+~~~FILE:/examples/greeter_test.rb:ruby~~~
 
 !SLIDE small
 
@@ -132,7 +138,7 @@ Almacena un nobre de usuario para saludarlo
 
 Primero hacemos `gem install rspec`
 
-~~~FILE:../examples/greeter_spec.rb:ruby~~~
+~~~FILE:/examples/greeter_spec.rb:ruby~~~
 
 !SLIDE small
 
@@ -159,4 +165,5 @@ Primero hacemos `gem install rspec`
     Failed examples:
 
     rspec ./examples/greeter_spec.rb:5 # Greeter#say returns 'Hello Name!'
+
 

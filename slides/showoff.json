@@ -4,5 +4,6 @@
   "author": "Oinak",
   "sections": [
     {"section": "intro"}
-  ]
+  ],
+  "highlight": "default"
 }

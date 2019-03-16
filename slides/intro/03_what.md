@@ -1,16 +1,44 @@
 !SLIDE subsection
 
-# ¿Qué testear (unit)?
+# ¿Qué testear?
 
-         | Incoming             | Outgoing
----------|----------------------|---------------------------
- Query   | (1) Response         | (3) Stub (test at provider)
- Command | (2) State (Response) | (4) Call is made (mock/verify)
+!SLIDE bullets incremental
 
-- **1:** `full_name` en una persona
-- **2:** `compact!` en una colección
-- **3:** `Time.now` que usaremos en un timestamp
-- **4:** `Slack.notify(channel: "#alert",txt: "Error: #{msg}")`
+## ¿Qué testear?
+
+- Unitarios (una pieza)
+- Funcionales (interacción entre piezas)
+- Integración (interacción entre sistemas)
+- Acceptación (punto de vista de usuario)
+
+<small>*sí, es una simplificación gruesa, ahorraos el tuit*</small>
+
+!SLIDE bullets incremental
+
+## ¿Qué testear (rails way)?
+
+- Modelos (tocando DB)
+- Controlador (abstrayendo muchas piezas, rutas, vistas...)
+- Integración (default en rails 5, ahora menos lentos)
+- System, benchmark...
+
+!SLIDE incremental
+
+## ¿Qué testear (unit)?
+
+---
+
+         | Incoming                      | Outgoing
+--------:|:-----------------------------:|:-----------------------------:
+ Query   | Response         <sup>1</sup> | Stub (test at provider)    <sup>3</sup>
+ Command | State (Response) <sup>2</sup> | Call is made (mock/verify) <sup>4</sup>
+
+
+1. `full_name` en una persona
+2. `compact!` en una colección
+3. `Time.now` que usaremos en un timestamp
+4. `Slack.notify(channel: "#alert",txt: "Error: #{msg}")`
+
 
 !SLIDE
 
@@ -140,14 +168,92 @@ Opciones:
 - comprobar que cambiamos el mundo
 - no cómo, sino qué
 
-!SLIDE bullets incremental
-## 4. outgoing command (mock/minitest)
-
-- comprobar que cambiamos el mundo
-- no cómo, sino qué
-
 !SLIDE
 
 ## clase con dependencias
 
-~~~FILE:../examples/dep_one.rb:ruby~~~
+~~~FILE:/examples/dep_one.rb:ruby~~~
+
+!SLIDE
+
+## test deps (outgoing command/rspec)
+
+    @@@ Ruby
+    describe "sends notification" do
+      let(:foo){ double() }
+      subject { DepOne.new(foo) }
+
+      before do
+        expect_any_instance_of(Notification).to receive(:deliver).
+          and_return(true)
+
+        expect(foo).to_receive(:save).and_return(true)
+      end
+
+      it "returns the specified value" do
+        expect(subject.run).to eq(true)
+
+        # auto verifies mocks
+      end
+    end
+
+!SLIDE
+
+## se cura con una inyeccion
+
+    @@@Ruby
+    class DepOne
+      def initialize(foo, notifier: Notification )
+        @foo = foo
+        @notifier = notifier
+      end
+
+      def run
+        if @foo.save
+          publish
+        end
+      end
+
+      private
+
+      def publish
+        notifier.deliver(@foo, Time.now)
+      end
+    end
+
+!SLIDE
+
+## test deps (outgoing command/minispec)
+
+    @@@ Ruby
+
+    describe "sends notification" do
+      let(:foo){ Minitest::Mock.new }
+      let(:notifier){ Minitest::Mock.new }
+      subject { DepOne.new(foo) }
+
+      before do
+        notifier.expect(:publish, notification, [Time, foo])
+        foo.expect(:save, true)
+      end
+
+      it "returns the specified value" do
+        expect(subject.run).to eq(true)
+
+        foo.verify # it was called the appropiate number of times
+      end
+    end
+
+!SLIDE bullets center
+
+## deberes
+
+[Mocks and stubs](http://www.martinfowler.com/bliki/TestDouble.html) *Fowler & Meszaros*
+
+!SLIDE bullets center
+
+![Manolo Rubyto](/_images/manolo_rubyto.png)
+
+## Gracias &#127829; !
+
+![Sponsors](/_images/sponsors.jpg)

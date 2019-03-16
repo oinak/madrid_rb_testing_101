@@ -133,13 +133,13 @@
 
 ## test_helper.rb
 
-~~~FILE:../examples/my_gem_mini/test/test_helper.rb:ruby~~~
+~~~FILE:/examples/my_gem_mini/test/test_helper.rb:ruby~~~
 
 !SLIDE
 
 ## spec_helper.rb
 
-~~~FILE:../examples/my_gem_rspec/spec/spec_helper.rb:ruby~~~
+~~~FILE:/examples/my_gem_rspec/spec/spec_helper.rb:ruby~~~
 
 !SLIDE
 # Ejecutar
@@ -148,11 +148,11 @@
 
 ## Rakefile (minitest)
 
-~~~FILE:../examples/my_gem_mini/Rakefile:ruby~~~
+~~~FILE:/examples/my_gem_mini/Rakefile:ruby~~~
 
 !SLIDE
 
 ## Rakefile (rspec)
 
-~~~FILE:../examples/my_gem_rspec/Rakefile:ruby~~~
+~~~FILE:/examples/my_gem_rspec/Rakefile:ruby~~~
 

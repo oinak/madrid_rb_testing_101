@@ -22,12 +22,6 @@
 
 # Testing 101
 
-## Introducción al testing
-
-!SLIDE center
-
-# Testing 101
-
 ## *Introducción* al testing
 
 !SLIDE bullets incremental
